@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>Brady's Projects</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%230b0e1c%22/%3E%3Cpath d=%22M18 12h18c10 0 15 5 15 13 0 5-3 9-7 11 6 2 9 6 9 12 0 9-7 14-17 14H18V12zm12 10v10h6c3 0 5-2 5-5s-2-5-5-5h-6zm0 19v11h7c4 0 6-2 6-6s-2-5-6-5h-7z%22 fill=%22%237ee0ff%22/%3E%3C/svg%3E">
+  <style>
+    * { box-sizing: border-box; }
+    ::selection {
+    color: #17203b;
+    background: #e8e8f5;
+  }
+  ::-moz-selection {
+    color: #17203b;
+    background: #e8e8f5;
+  }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(126, 224, 255, 0.04), transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(126, 224, 255, 0.1), transparent 50%),
+        linear-gradient(135deg, #05060c, #0b0e1c, #131a30); 
+      min-height: 100vh;
+      color: #e8e8f5;
+      margin: 0;
+      padding: 2rem 1rem 4rem;
+      line-height: 1.55;
+    }
+
+    .window {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(30, 42, 78, 0.63);
+      border: 2px solid #4a4478;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      backdrop-filter: blur(6px);
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1rem;
+      background: rgba(36, 36, 62, 0.9);
+      border-bottom: 1px solid #4a4478;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #b8b3e0;
+    }
+
+    .titlebar .dots button {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      margin-left: 6px;
+    }
+    .titlebar .dots button:nth-child(1) { background: #ff6b8a; }
+    .titlebar .dots button:nth-child(2) { background: #ffc76b; }
+    .titlebar .dots button:nth-child(3) { background: #6bffb8; }
+
+
+    .titlebar .dots button { appearance: none; padding: 0; border: 0; cursor: pointer; }
+    .titlebar .dots button:hover { filter: brightness(1.25); transform: scale(1.12); }
+    .window.animating-geometry { transition: left 350ms ease, top 350ms ease, width 350ms ease, height 350ms ease, transform 350ms ease, opacity 300ms ease; }
+    .window.maximized { position: fixed; left: 1rem; top: 1rem; width: calc(100vw - 2rem); height: calc(100vh - 2rem); max-width: none; max-height: none; margin: 0; z-index: 10; transform: none; overflow: auto; }
+.window.is-hidden { display: none; }
+    .window-launcher { display: none; position: fixed; left: 1rem; bottom: 1rem; z-index: 20; }
+    .window-launcher button { border: 1px solid #4a4478; border-radius: 8px; background: #17203b; color: #e8e8f5; padding: 0.65rem 0.9rem; font: inherit; cursor: pointer; }
+    .window-launcher button:hover { border-color: #a8a2d0; }
+    .content {
+      padding: 2.5rem 2rem 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+      background: rgb(151, 178, 203);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin: 0 0 2rem;
+      color: #a8a2d0;
+      font-size: 1.05rem;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px dashed #4a4478;
+      margin: 2rem 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .project {
+      position: relative;
+      --accent: 126, 224, 255;
+      display: block;
+      border: 1px solid #4a4478;
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(72, 64, 140, 0.35);
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+
+    .project:hover {
+      transform: translateY(-3px);
+      border-color: rgb(var(--accent));
+      box-shadow:
+        0 0 0 1px rgba(var(--accent), 0.15),
+        0 0 20px rgba(var(--accent), 0.35),
+        0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .project-info {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 0.9rem 1rem 1rem;
+      color: #e8e8f5;
+      background: rgba(23, 32, 59, 0.96);
+      border-top: 1px solid rgba(var(--accent), 0.7);
+      transform: translateY(100%);
+      transition: transform 280ms ease;
+    }
+
+    .project-info h2 {
+      margin: 0 0 0.25rem;
+      color: rgb(var(--accent));
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .project-info p {
+      margin: 0;
+      color: #c8c8dc;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .project:hover .project-info,
+    .project:focus-visible .project-info,
+    .project:focus-within .project-info {
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .project-info { transition: none; }
+    }
+    .project img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .project:hover img {
+      transform: scale(1.05);
+    }
+
+    .footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px dashed #4a4478;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: #a8a2d0;
+      letter-spacing: 0.05em;
+    }
+
+    .blink {
+      color: #a8a2d0;
+      animation: blink 1s steps(2, start) infinite;
+    }
+    @keyframes blink {
+      to { visibility: hidden; }
+    }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      h1 { font-size: 2.5rem; }
+    }
+
+    @media (max-width: 460px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2rem; }
+      .content { padding: 2rem 1.25rem 1.5rem; }
+    }
+    @view-transition {
+      navigation: auto;
+    }
+    @keyframes fade-out { to { opacity: 0; } }
+    @keyframes fade-in  { from { opacity: 0; } }
+
+    ::view-transition-group(asteroids) {
+      animation-duration: 250ms;
+      animation-timing-function: ease-out;
+    }
+
+    .titlebar {
+      cursor: default;
+      touch-action: none;
+      user-select: none;
+     }
+    .window.dragging .titlebar { cursor: grabbing; }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      <span>~/brady/projects</span>
+      <span class="dots window-controls">
+        <button class="window-control close-control" type="button" aria-label="Close window" title="Close"></button>
+        <button class="window-control minimize-control" type="button" aria-label="Minimize window" title="Minimize"></button>
+        <button class="window-control maximize-control" type="button" aria-label="Maximize window" title="Maximize"></button>
+      </span>
+    </div>
+
+    <div class="content">
+      <h1>Brady's Projects</h1>
+      <p class="subtitle">A running collection of things I've built, broken, and rebuilt.</p>
+
+      <hr class="divider">
+
+      <div class="grid">
+        <a class="project" href="asteroids/index.html">
+          <img src="game-images/asteroids.png" alt="Asteroids game" style="view-transition-name: asteroids;">
+          <div class="project-info">
+            <h2>Asteroids</h2>
+            <p>Dodge rocks. Shoot rocks. Get hit by rocks. Repeat.</p>
+          </div>
+        </a>
+
+        <a class="project" href="#" style="--accent: 255, 107, 138;">
+          <img src="game-images/project-two.png" alt="Project Two">
+          <div class="project-info">
+            <h2>Project Two</h2>
+            <p>A work-in-progress from the game shelf. Click in and see what happens.</p>
+          </div>
+        </a>
+
+        <a class="project" href="#" style="--accent: 0, 85, 230;">
+          <img src="game-images/project-three.png" alt="Project Three">
+          <div class="project-info">
+            <h2>Project Three</h2>
+            <p>Another little experiment in pixels, chaos, and questionable decisions.</p>          </div>
+        </a>
+      </div>
+
+      <div class="footer">
+        <span>&copy; 2026 Brady</span>
+        <span id="status-bar" aria-live="polite"><span id="project-count"></span> · <span id="live-clock"></span></span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="window-launcher" id="minimized-launcher"><button type="button" id="restore-minimized">~/brady/projects — restore</button></div>
+  <script>
+    const projectCount = document.querySelectorAll(".project").length;
+    document.querySelector("#project-count").textContent =
+      `${projectCount} PROJECT${projectCount === 1 ? "" : "S"} LOADED`;
+
+    const clock = document.querySelector("#live-clock");
+    function updateClock() {
+      clock.textContent = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const win = document.querySelector(".window");
+    const minimizedLauncher = document.querySelector("#minimized-launcher");
+    let normalBounds = null;
+
+    // The red button intentionally has no click action.
+    const minimizeControl = document.querySelector(".minimize-control");
+    const restoreButton = document.querySelector("#restore-minimized");
+    const animationOptions = { duration: 420, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
+
+    function transformBetweenRects(sourceRect, targetRect, baseLeft, baseTop) {
+      const scaleX = targetRect.width / sourceRect.width;
+      const scaleY = targetRect.height / sourceRect.height;
+      return `translate(${targetRect.left - baseLeft}px, ${targetRect.top - baseTop}px) scale(${scaleX}, ${scaleY})`;
+    }
+
+    minimizeControl.addEventListener("click", () => {
+      minimizeControl.disabled = true;
+      minimizedLauncher.style.display = "block";
+      minimizedLauncher.style.visibility = "hidden";
+      const sourceRect = win.getBoundingClientRect();
+      const targetRect = restoreButton.getBoundingClientRect();
+      setTimeout(() =>  {
+        minimizedLauncher.style.visibility = "visible"
+      }, 300);
+      const baseLeft = win.classList.contains("maximized") ? sourceRect.left : sourceRect.left - x;
+      const baseTop = win.classList.contains("maximized") ? sourceRect.top : sourceRect.top - y;
+      win.style.transformOrigin = "top left";
+      const animation = win.animate([
+        { transform: transformBetweenRects(sourceRect, sourceRect, baseLeft, baseTop), opacity: 1 },
+        { transform: transformBetweenRects(sourceRect, targetRect, baseLeft, baseTop), opacity: 0.7 }
+      ], animationOptions);
+      animation.onfinish = () => {
+        win.classList.add("is-hidden");
+        animation.cancel();
+        win.style.transformOrigin = "";
+      };
+    });
+    const maximizeControl = document.querySelector(".maximize-control");
+    maximizeControl.addEventListener("click", () => {
+      if (!win.classList.contains("maximized")) {
+        const rect = win.getBoundingClientRect();
+        normalBounds = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+        x = 0;
+        y = 0;
+        win.style.position = "fixed";
+        win.style.left = `${rect.left}px`;
+        win.style.top = `${rect.top}px`;
+        win.style.width = `${rect.width}px`;
+        win.style.height = `${rect.height}px`;
+        win.style.maxWidth = "none";
+        win.style.margin = "0";
+        win.style.transform = "none";
+        win.classList.add("animating-geometry");
+        void win.offsetWidth;
+        win.classList.add("maximized");
+        win.style.left = "";
+        win.style.top = "";
+        win.style.width = "";
+        win.style.height = "";
+        maximizeControl.title = "Restore";
+        maximizeControl.setAttribute("aria-label", "Restore window");
+      } else if (normalBounds) {
+        win.classList.remove("maximized");
+        win.style.left = `${normalBounds.left}px`;
+        win.style.top = `${normalBounds.top}px`;
+        win.style.width = `${normalBounds.width}px`;
+        win.style.height = `${normalBounds.height}px`;
+        maximizeControl.title = "Maximize";
+        maximizeControl.setAttribute("aria-label", "Maximize window");
+        window.setTimeout(() => win.classList.remove("animating-geometry"), 360);
+      }
+    });
+
+    restoreButton.addEventListener("click", () => {
+      const sourceRect = restoreButton.getBoundingClientRect();
+      minimizedLauncher.style.display = "none";
+      win.classList.remove("is-hidden");
+      const targetRect = win.getBoundingClientRect();
+      const baseLeft = win.classList.contains("maximized") ? targetRect.left : targetRect.left - x;
+      const baseTop = win.classList.contains("maximized") ? targetRect.top : targetRect.top - y;
+      win.style.transformOrigin = "top left";
+      const animation = win.animate([
+        { transform: transformBetweenRects(targetRect, sourceRect, baseLeft, baseTop), opacity: 0.7 },
+        { transform: transformBetweenRects(targetRect, targetRect, baseLeft, baseTop), opacity: 1 }
+      ], animationOptions);
+      animation.onfinish = () => {
+        animation.cancel();
+        win.style.transformOrigin = "";
+        minimizeControl.disabled = false;
+      };
+    });
+    const bar = document.querySelector(".titlebar");
+
+    let x = 0, y = 0;
+    let startX, startY, startPX, startPY, minX, maxX, minY, maxY;
+
+    bar.addEventListener("pointerdown", e => {
+      if (e.target.closest(".window-controls")) return;
+      if (win.classList.contains("maximized")) return;
+      if (window.matchMedia("(max-width: 720px)").matches) return;
+
+      const r = win.getBoundingClientRect();
+      const baseLeft = r.left - x;
+      const baseTop = r.top - y;
+      minX = -(baseLeft + r.width - 80);
+      maxX = window.innerWidth - baseLeft - 80;
+      minY = -baseTop;
+      maxY = window.innerHeight - baseTop - bar.offsetHeight;
+
+      startX = e.clientX;  startY = e.clientY;
+      startPX = x;         startPY = y;
+      bar.setPointerCapture(e.pointerId);
+      win.classList.add("dragging");
+    });
+
+    bar.addEventListener("pointermove", e => {
+      if (!win.classList.contains("dragging")) return;
+      x = Math.min(maxX, Math.max(minX, startPX + e.clientX - startX));
+      y = Math.min(maxY, Math.max(minY, startPY + e.clientY - startY));
+      win.style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    const stopDrag = () => win.classList.remove("dragging");
+    bar.addEventListener("pointerup", stopDrag);
+    bar.addEventListener("pointercancel", stopDrag);
+  </script>
+</body>
+</html>
+
+
