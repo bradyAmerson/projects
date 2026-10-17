@@ -7,6 +7,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <title>Brady's Projects</title>
+  <script>
+    // Coming back from the archive: keep the iris shut until the page is ready to open it
+    if (sessionStorage.getItem("irisTo") === "hub") document.documentElement.classList.add("iris-arriving");
+  </script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%230b0e1c%22/%3E%3Cpath d=%22M18 12h18c10 0 15 5 15 13 0 5-3 9-7 11 6 2 9 6 9 12 0 9-7 14-17 14H18V12zm12 10v10h6c3 0 5-2 5-5s-2-5-5-5h-6zm0 19v11h7c4 0 6-2 6-6s-2-5-6-5h-7z%22 fill=%22%237ee0ff%22/%3E%3C/svg%3E">
   <style>
     * { box-sizing: border-box; }
@@ -34,7 +38,7 @@
     .window {
       max-width: 1200px;
       margin: 0 auto;
-      background: rgba(30, 42, 78, 0.63);
+      background: rgba(74, 74, 74, 0.4);
       border: 2px solid #4a4478;
       border-radius: 12px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
@@ -46,13 +50,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: rgba(20, 0, 41, 0.4);
       padding: 0.6rem 1rem;
-      background: rgba(36, 36, 62, 0.9);
       border-bottom: 1px solid #4a4478;
       font-size: 0.8rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: #b8b3e0;
+      backdrop-filter: blur(6px);
     }
 
     .titlebar .dots button {
@@ -71,7 +76,7 @@
     .titlebar .dots button:hover { filter: brightness(1.25); transform: scale(1.12); }
     .window.animating-geometry { transition: left 350ms ease, top 350ms ease, width 350ms ease, height 350ms ease, transform 350ms ease, opacity 300ms ease; }
     .window.maximized { position: fixed; left: 1rem; top: 1rem; width: calc(100vw - 2rem); height: calc(100vh - 2rem); max-width: none; max-height: none; margin: 0; z-index: 10; transform: none; overflow: auto; }
-.window.is-hidden { display: none; }
+    .window.is-hidden { display: none; }
     .window-launcher { display: none; position: fixed; left: 1rem; bottom: 1rem; z-index: 20; }
     .window-launcher button { border: 1px solid #4a4478; border-radius: 8px; background: #17203b; color: #e8e8f5; padding: 0.65rem 0.9rem; font: inherit; cursor: pointer; }
     .window-launcher button:hover { border-color: #a8a2d0; }
@@ -135,18 +140,18 @@
     .project-info {
       position: absolute;
       inset: auto 0 0;
-      padding: 0.9rem 1rem 1rem;
+      padding: 0.6rem 0.8rem 0.7rem;
       color: #e8e8f5;
-      background: rgba(23, 32, 59, 0.96);
+      background: rgba(23, 32, 59, 0.85);
       border-top: 1px solid rgba(var(--accent), 0.7);
       transform: translateY(100%);
       transition: transform 280ms ease;
     }
 
     .project-info h2 {
-      margin: 0 0 0.25rem;
+      margin: 0 0 0.15rem;
       color: rgb(var(--accent));
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
@@ -154,8 +159,8 @@
     .project-info p {
       margin: 0;
       color: #c8c8dc;
-      font-size: 0.85rem;
-      line-height: 1.4;
+      font-size: 0.78rem;
+      line-height: 1.3;
     }
 
     .project:hover .project-info,
@@ -220,6 +225,33 @@
       animation-timing-function: ease-out;
     }
 
+    /* ---------- Iris transition (same as The Dead Media Archive) ---------- */
+    .iris { position: fixed; inset: 0; z-index: 100; pointer-events: none; visibility: hidden; overflow: hidden; }
+    .iris.on { visibility: visible; pointer-events: all; }
+    .iris-hole {
+      position: absolute; left: 50%; top: 50%;
+      width: 300vmax; height: 300vmax; transform: translate(-50%, -50%);
+      border-radius: 50%; box-shadow: 0 0 0 300vmax #0b0603;
+    }
+    .iris-title {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      white-space: nowrap; padding: 0 63px; opacity: 0;
+      font-family: "Bodoni MT", Didot, "Playfair Display", "Hoefler Text", Georgia, serif;
+      font-style: italic; font-size: clamp(25.2px, 4vw, 43.2px);
+      line-height: 1.55; letter-spacing: normal; font-weight: 400; text-transform: none;
+      color: #e2bd6e; text-shadow: 0 0 14px rgba(226,189,110,.4);
+    }
+    /* The rules sit on the padded box, so they reach 63px past the text on each side */
+    .iris-title::before, .iris-title::after { content: ""; position: absolute; left: 0; right: 0; height: 3px; background: #6f4f1c; }
+    .iris-title::before { top: -0.3em; }
+    .iris-title::after { bottom: -0.3em; }
+    html.iris-arriving .iris { visibility: visible; }
+    html.iris-arriving .iris-hole { width: 0; height: 0; }
+    html.iris-arriving .iris-title { opacity: 1; }
+    html.iris-arriving { overflow: hidden; } /* no scrollbar, so the title sits in the same spot on both pages */
+    /* Keep the asteroids card out of the browser's page transition while the iris runs, so it can't draw over the black */
+    html.iris-arriving .project img, html.iris-leaving .project img { view-transition-name: none !important; }
+
     .titlebar {
       cursor: default;
       touch-action: none;
@@ -254,31 +286,119 @@
           </div>
         </a>
 
-        <a class="project" href="#" style="--accent: 255, 107, 138;">
-          <img src="game-images/project-two.png" alt="Project Two">
+        <a class="project" href="the-dead-media-archive/index.html" style="--accent: 226, 189, 110;">
+          <img src="game-images/the-dead-media-archive.png" alt="Dead media archive">
           <div class="project-info">
-            <h2>Project Two</h2>
-            <p>A work-in-progress from the game shelf. Click in and see what happens.</p>
+            <h2>The Dead Media Archive</h2>
+            <p>How much retro hardware would your digital file require to store?</p>
           </div>
         </a>
 
-        <a class="project" href="#" style="--accent: 0, 85, 230;">
-          <img src="game-images/project-three.png" alt="Project Three">
+        <a class="project" href="what-are-the-odds/index.html" style="--accent: 0, 85, 230;">
+          <img src="game-images/what-are-the-odds.png" alt="What Are the Odds?">
           <div class="project-info">
-            <h2>Project Three</h2>
-            <p>Another little experiment in pixels, chaos, and questionable decisions.</p>          </div>
+            <h2>What Are the Odds?</h2>
+            <p>Comparing the odds of unlikely scenarios to see just how improbable they really are</p>          
+            </div>
         </a>
       </div>
 
       <div class="footer">
         <span>&copy; 2026 Brady</span>
-        <span id="status-bar" aria-live="polite"><span id="project-count"></span> · <span id="live-clock"></span></span>
+          <span id="status-bar" aria-live="polite"><span id="project-count"></span> · <span id="live-clock"></span></span>
       </div>
     </div>
   </div>
   
-  <div class="window-launcher" id="minimized-launcher"><button type="button" id="restore-minimized">~/brady/projects — restore</button></div>
+  <div id="iris" class="iris" aria-hidden="true">
+    <div class="iris-hole"></div>
+    <div class="iris-title" id="iris-title"></div>
+  </div>
   <script>
+    if (document.documentElement.classList.contains("iris-arriving")) {
+      document.getElementById("iris-title").textContent = sessionStorage.getItem("irisLabel") || "";
+    }
+  </script>
+
+  <div class="window-launcher" id="minimized-launcher"><button type="button" id="restore-minimized">~/brady/projects</button></div>
+  <script>
+    // ---------- Iris transition ----------
+    const iris = document.querySelector("#iris");
+    const irisHole = iris.querySelector(".iris-hole");
+    const irisTitle = document.querySelector("#iris-title");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let transitioning = false;
+
+    function irisAnim(closing) {
+      const open = { width: "300vmax", height: "300vmax" };
+      const shut = { width: "0px", height: "0px" };
+      return irisHole.animate(closing ? [open, shut] : [shut, open], {
+        duration: closing ? 650 : 850,
+        easing: closing ? "cubic-bezier(.4,0,.2,0)" : "cubic-bezier(.16,1,.3,1)",
+        fill: "forwards"
+      }).finished;
+    }
+
+    async function irisNavigate(label, url, destination) {
+      if (transitioning) return;
+      transitioning = true;
+      if (reduceMotion) { window.location.href = url; return; }
+      document.documentElement.classList.add("iris-leaving");
+      irisTitle.textContent = label;
+      iris.classList.add("on");
+      await irisAnim(true);
+      // Seal the screen: drop the scrollbar (the next page has none while the iris is shut) so the title doesn't shift
+      document.documentElement.style.overflow = "hidden";
+      irisTitle.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 250, fill: "forwards" });
+      try {
+        sessionStorage.setItem("irisTo", destination);
+        sessionStorage.setItem("irisLabel", label);
+      } catch (e) {}
+      await new Promise((r) => setTimeout(r, 650));
+      window.location.href = url;
+    }
+
+    async function irisArrive() {
+      const root = document.documentElement;
+      if (!root.classList.contains("iris-arriving")) return;
+      try { sessionStorage.removeItem("irisTo"); sessionStorage.removeItem("irisLabel"); } catch (e) {}
+      if (reduceMotion) { root.classList.remove("iris-arriving"); return; }
+      transitioning = true;
+      iris.classList.add("on");
+      await new Promise((r) => setTimeout(r, 650));
+      await irisTitle.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: "forwards" }).finished;
+      await irisAnim(false);
+      iris.classList.remove("on");
+      root.classList.remove("iris-arriving");
+      transitioning = false;
+    }
+
+    // The iris is its own transition, so skip the browser's page transition (its crossfade is the visible seam)
+    window.addEventListener("pageswap", (e) => {
+      if (e.viewTransition && document.documentElement.classList.contains("iris-leaving")) e.viewTransition.skipTransition();
+    });
+    window.addEventListener("pagereveal", (e) => {
+      if (e.viewTransition && document.documentElement.classList.contains("iris-arriving")) e.viewTransition.skipTransition();
+    });
+
+    // Back/forward cache can restore this page with the iris still shut
+    window.addEventListener("pageshow", (e) => {
+      if (!e.persisted) return;
+      iris.classList.remove("on");
+      document.documentElement.style.overflow = "";
+      document.documentElement.classList.remove("iris-arriving", "iris-leaving");
+      transitioning = false;
+    });
+
+    const archiveLink = document.querySelector('a.project[href*="the-dead-media-archive"]');
+    archiveLink.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      irisNavigate("Entering the Filing Cabinet", archiveLink.href, "archive");
+    });
+
+    irisArrive();
+
     const projectCount = document.querySelectorAll(".project").length;
     document.querySelector("#project-count").textContent =
       `${projectCount} PROJECT${projectCount === 1 ? "" : "S"} LOADED`;
@@ -293,7 +413,7 @@
     }
     updateClock();
     setInterval(updateClock, 1000);
-
+    
     const win = document.querySelector(".window");
     const minimizedLauncher = document.querySelector("#minimized-launcher");
     let normalBounds = null;
@@ -422,5 +542,3 @@
   </script>
 </body>
 </html>
-
-

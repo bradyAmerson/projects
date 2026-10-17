@@ -2519,7 +2519,6 @@ function applyInterpolation(alpha) {
 
     const dx = e.x - e._px;
     const dy = e.y - e._py;
-    // object wrapped around a screen edge (or teleported) this tick: don't smear it across the screen
     if (Math.abs(dx) > canvas.width * 0.5 || Math.abs(dy) > canvas.height * 0.5) return;
 
     interpSaved.push(e, e.x, e.y, e.angle, e.rotation);

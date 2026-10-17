@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Dead Media Archive</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+      // Coming from the projects hub: keep the iris shut until the page is ready to open it
+      if (sessionStorage.getItem("irisTo") === "archive") document.documentElement.classList.add("iris-arriving");
+    </script>
+  </head>
+  <body>
+    <!-- Full-screen shared element for the page transition (matches the asteroids canvas) -->
+    <div class="transition-backdrop" aria-hidden="true"></div>
+    <main id="app">
+      <!-- Stage 1: Landing / File Selection -->
+      <section id="view-landing" class="view active">
+        <header class="hero">
+          <h1>The Dead Media Archive</h1>
+          <p class="lede">How much retro hardware would your digital file require to store?</p>
+        </header>
+
+        <section class="intro">
+          <p>Every file is just a pile of bytes, and every storage device ever built could hold only so many of them. Choose a photo, song, or video and the archive divides its size by each device&rsquo;s capacity, from modern flash drives back to the punch cards of 1928. Then walk the timeline and see the stack of hardware your file would have needed.</p>
+          <ol class="intro-steps">
+            <li><span>1</span> Pick a file</li>
+            <li><span>2</span> Enter the archive</li>
+            <li><span>3</span> Travel back in time</li>
+          </ol>
+        </section>
+
+        <div class="picker-card">
+          <h2>Select or Upload a File</h2>
+          <div class="picker">
+            <label class="upload">
+              Upload Your File
+              <input type="file" id="file-input" accept="image/*,video/*,audio/*">
+            </label>
+            <div id="preset-list"></div>
+          </div>
+
+          <div id="preview"></div>
+
+          <button id="btn-enter-timeline" class="btn-primary enter-btn">
+            Enter the Archive
+          </button>
+        </div>
+
+        <div class="projects-link">
+          <button id="btn-back-projects" class="btn-secondary">← Back to Projects</button>
+        </div>
+      </section>
+
+      <!-- Stage 2: Timeline Viewer -->
+      <section id="view-timeline" class="view">
+        <header class="timeline-nav-bar">
+          <button id="btn-back-menu" class="btn-secondary">← Change File</button>
+          <div class="file-badge" id="current-file-badge"></div>
+          <div class="timeline-progress" id="timeline-counter"></div>
+        </header>
+
+        <!-- Scrubber Bar -->
+        <nav class="timeline-scrubber" id="timeline-scrubber" aria-label="Historical Timeline"></nav>
+
+        <!-- Stage Container -->
+        <div class="stage-container">
+          <button id="btn-prev-stage" class="stage-nav prev" aria-label="Previous storage device"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div id="stage-content" class="stage-content"></div>
+          <button id="btn-next-stage" class="stage-nav next" aria-label="Next storage device"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Iris transition overlay (old silent-film "iris out / iris in") -->
+    <div id="iris" class="iris" aria-hidden="true">
+      <div class="iris-hole"></div>
+      <div class="iris-title" id="iris-title"></div>
+    </div>
+    <script>
+      if (document.documentElement.classList.contains("iris-arriving")) {
+        document.getElementById("iris-title").textContent = sessionStorage.getItem("irisLabel") || "";
+      }
+    </script>
+
+    <script src="media-data.js"></script>
+    <script src="presets.js"></script>
+    <script src="comparisons.js"></script>
+    <script src="format.js"></script>
+    <script src="stack.js"></script>
+    <script src="sprites.js"></script>
+    <script src="stops.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
