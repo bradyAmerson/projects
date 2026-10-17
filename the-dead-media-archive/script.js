@@ -49,7 +49,7 @@ async function withIris(label, swap) {
   await irisAnim(true);
   irisTitle.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 250, fill: "forwards" });
   swap();
-  await new Promise((r) => setTimeout(r, 650));
+  await new Promise((r) => setTimeout(r, 50));
   await irisTitle.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: "forwards" }).finished;
   await irisAnim(false);
   iris.classList.remove("on");

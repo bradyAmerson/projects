@@ -354,7 +354,7 @@
         sessionStorage.setItem("irisTo", destination);
         sessionStorage.setItem("irisLabel", label);
       } catch (e) {}
-      await new Promise((r) => setTimeout(r, 650));
+      await new Promise((r) => setTimeout(r, 50));
       window.location.href = url;
     }
 
@@ -365,7 +365,7 @@
       if (reduceMotion) { root.classList.remove("iris-arriving"); return; }
       transitioning = true;
       iris.classList.add("on");
-      await new Promise((r) => setTimeout(r, 650));
+      await new Promise((r) => setTimeout(r, 50));
       await irisTitle.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: "forwards" }).finished;
       await irisAnim(false);
       iris.classList.remove("on");
